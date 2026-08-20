@@ -1,0 +1,15 @@
+{
+  "name": "screen-connect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebRTC 语音聊天 + 屏幕共享应用",
+  "scripts": {
+    "dev:server": "pnpm --filter screen-connect-server start",
+    "dev:client": "pnpm --filter screen-connect-client dev",
+    "build:client": "pnpm --filter screen-connect-client build",
+    "build": "pnpm run build:client"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

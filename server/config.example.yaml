@@ -1,0 +1,51 @@
+# ScreenConnect 服务器配置示例
+#
+# 使用前复制为 config.yaml 并修改：
+#   cp config.example.yaml config.yaml
+#
+# config.yaml 不会被 git 跟踪（已在 .gitignore 中忽略）。
+
+# ============================================================================
+# ICE 服务器配置（WebRTC NAT 穿透）
+# 由服务器统一下发给客户端，无需在客户端硬编码。
+# ============================================================================
+
+iceServers:
+  # ---- 免费 STUN（无需认证）----
+  # Cloudflare STUN，延迟最低
+  - urls: "stun:stun.cloudflare.com:3478"
+  # Google STUN（国内可能不可用）
+  - urls: "stun:stun.l.google.com:19302"
+  # Antisip STUN
+  - urls: "stun:stun.antisip.com:3478"
+  # FreeSWITCH STUN
+  - urls: "stun:stun.freeswitch.org:3478"
+  # Metered STUN
+  - urls: "stun:stun.relay.metered.ca:80"
+
+  # ---- 免费 TURN（Cloudflare，无需认证）----
+  - urls: "turn:turn.cloudflare.com:3478?transport=udp"
+
+  # ---- 自建 coturn（推荐，最稳定）----
+  # 取消注释并填入你的 coturn 服务器信息：
+  # - urls: "stun:your.coturn.host:3478"
+  # - urls: "turn:your.coturn.host:3478"
+  #   username: "youruser"
+  #   credential: "yourpass"
+  # - urls: "turn:your.coturn.host:3478?transport=tcp"
+  #   username: "youruser"
+  #   credential: "yourpass"
+
+# ============================================================================
+# 房间列表
+# name 同时作为唯一标识，无需 id
+# desc 可选，显示在房间卡片上
+# ============================================================================
+
+rooms:
+  - name: 大厅
+    desc: 公共聊天室
+  - name: 技术交流
+    desc: 聊聊技术
+  - name: 摸鱼角
+    desc: 划水专用

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+server/node_modules/
+client/node_modules/
+
+# Build output
+client/src-tauri/target/
+*.exe
+*.msi
+*.dmg
+*.AppImage
+*.deb
+
+# Windows shortcuts
+*.lnk
+
+# Environment
+.env
+.env.local
+
+# Server config (contains TURN credentials, use config.example.yaml)
+server/config.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
