@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="night">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScreenConnect · 聊天室</title>
+    <!-- 直接以 <link> 引入编译后的 CSS（Tailwind/PostCSS 产物）：
+         加载动画（#splash）在 JS bundle 就绪前就生效；dev 下 CSS 若只由 JS 注入，
+         会出现“HTML 已渲染但样式未到”的无样式闪烁。生产构建会去重合并为单个 CSS 文件。 -->
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body class="min-h-screen overflow-hidden bg-[radial-gradient(1200px_600px_at_50%_-10%,var(--color-panel2),var(--color-background))] text-text font-sans text-sm leading-normal">
+    <!-- 加载动画：在 React 挂载前就显示 -->
+    <div
+      id="splash"
+      class="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-lg bg-[radial-gradient(1200px_600px_at_50%_-10%,var(--color-panel2),var(--color-background))] transition-opacity duration-300"
+    >
+      <div
+        class="w-12 h-12 rounded-full border-4 border-accent/20 border-t-accent animate-sc-spin"
+      ></div>
+      <div class="text-2xl font-bold tracking-[0.5px]">ScreenConnect</div>
+      <div class="text-tip text-[13px]">加载中…</div>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

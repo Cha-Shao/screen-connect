@@ -3,8 +3,12 @@ node_modules/
 server/node_modules/
 client/node_modules/
 
+# pnpm store（本机环境变量导致 store 落在仓库内时不要提交）
+.pnpm-store/
+
 # Build output
 client/src-tauri/target/
+ui/dist/
 *.exe
 *.msi
 *.dmg
@@ -20,6 +24,21 @@ client/src-tauri/target/
 
 # Server config (contains TURN credentials, use config.example.yaml)
 server/config.yaml
+
+# ASR artifacts (whisper binary/model + transcript logs)
+server/whisper/
+server/logs/
+
+# Silero VAD 人声门控模型（setup-silero-vad.sh 下载，约 2MB）
+server/silero/
+
+# ASR 阿里云引擎临时音频目录（一句话一个 WAV，转写完成后自动删除）
+server/asr-audio/
+
+# ASR 测试产物
+server/test-logs-aliyun/
+server/test-audio-aliyun/
+server/test-logs/
 
 # IDE
 .idea/

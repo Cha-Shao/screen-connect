@@ -1,0 +1,27 @@
+# 阿里云 ASR（qwen-audio-3.0-asr-flash，多模态 generation 接口）端到端测试配置
+# 用法：$env:PORT=8099; $env:SC_CONFIG='X:\screen-connect\server\test-asr-aliyun-config.yaml'; node server.js
+# 然后另开终端：node test-asr-aliyun.js
+rooms:
+  - name: 大厅
+
+asr:
+  enabled: true
+  mode: "aliyun-bailian"
+  logDir: "test-logs-aliyun"
+  mock: false
+  vadThreshold: 0.012
+  minSpeechMs: 300
+  silenceFlushMs: 900
+  maxUtteranceMs: 10000
+  # 本测试验证 HTTP 层的 400 {} 处理，不开人声门控（否则鼓掌样本到不了桩）
+  speechGate:
+    enabled: false
+  aliyun:
+    apiKey: "test-key"
+    workspaceId: "test-ws"
+    region: "cn-beijing"
+    model: "qwen-audio-3.0-asr-flash"
+    # 指向测试桩的 API 地址
+    baseUrl: "http://127.0.0.1:8123"
+    # 失败音频保留目录（测试桩不管它；失败时会写到这里）
+    audioDir: "test-audio-aliyun"

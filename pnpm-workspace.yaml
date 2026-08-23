@@ -1,3 +1,16 @@
 packages:
   - "server"
   - "client"
+  - "ui"
+
+allowBuilds:
+  esbuild: set this to true or false
+
+# 允许 esbuild 运行构建脚本（pnpm 10 默认拦截；esbuild 平台二进制虽由
+# @esbuild/win32-x64 可选依赖提供，批准脚本可消除每次 install 的告警）
+onlyBuiltDependencies:
+  - esbuild
+
+# pnpm run 前跳过 deps 校验（esbuild 构建脚本被策略拦截时会拖垮 run 命令；
+# esbuild 平台二进制由可选依赖 @esbuild/win32-x64 提供，不需要 postinstall）
+verifyDepsBeforeRun: false

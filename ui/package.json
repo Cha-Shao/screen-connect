@@ -1,0 +1,30 @@
+{
+  "name": "screen-connect-ui",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ScreenConnect 前端（React + Vite），浏览器与 Tauri 共用",
+  "scripts": {
+    "dev": "vite serve",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "daisyui": "^5.7.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

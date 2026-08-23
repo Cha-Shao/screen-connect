@@ -1,0 +1,10 @@
+# 统一行尾：文本文件入库统一 LF，Windows 检出 CRLF（core.autocrlf=true）
+* text=auto
+
+# bash 脚本必须保持 LF（CRLF 会破坏 bash 执行）
+*.sh text eol=lf
+
+# 二进制文件不做行尾转换
+*.png binary
+*.wasm binary
+*.ico binary

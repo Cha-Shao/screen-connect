@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "identifier": "com.screenconnect.app",
   "build": {
-    "frontendDist": "../../shared"
+    "beforeDevCommand": "pnpm --filter screen-connect-ui dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "pnpm --filter screen-connect-ui build",
+    "frontendDist": "../../ui/dist"
   },
   "app": {
     "withGlobalTauri": true,

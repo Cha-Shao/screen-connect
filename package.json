@@ -5,7 +5,10 @@
   "description": "WebRTC 语音聊天 + 屏幕共享应用",
   "scripts": {
     "dev:server": "pnpm --filter screen-connect-server start",
+    "dev:ui": "pnpm --filter screen-connect-ui dev",
     "dev:client": "pnpm --filter screen-connect-client dev",
+    "build:ui": "pnpm --filter screen-connect-ui build",
+    "preview:ui": "pnpm --filter screen-connect-ui preview",
     "build:client": "pnpm --filter screen-connect-client build",
     "build": "pnpm run build:client"
   },

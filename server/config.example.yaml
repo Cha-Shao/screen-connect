@@ -6,6 +6,14 @@
 # config.yaml 不会被 git 跟踪（已在 .gitignore 中忽略）。
 
 # ============================================================================
+# 监听地址
+#   host: "0.0.0.0"    -> 监听所有网卡（默认，公网直连）
+#   host: "127.0.0.1"  -> 只监听本机回环（内网模式：配合 Nginx/Caddy 反代，
+#                         外部无法直连服务器端口，只能走反代）
+# ============================================================================
+host: "0.0.0.0"
+
+# ============================================================================
 # ICE 服务器配置（WebRTC NAT 穿透）
 # 由服务器统一下发给客户端，无需在客户端硬编码。
 # ============================================================================
@@ -49,3 +57,89 @@ rooms:
     desc: 聊聊技术
   - name: 摸鱼角
     desc: 划水专用
+
+# ============================================================================
+# ASR 语音转写（可选）
+# 开启后房间内可一键开启"转写模式"：客户端把麦克风音频推给服务器，
+# 服务器用本地 whisper.cpp（base 模型）转写并广播给房间，落盘到 logs/。
+# 安装 whisper（在 server 目录下）：
+#   Debian/Ubuntu:  sudo apt install -y curl unzip && bash setup-whisper.sh
+#   Windows:        powershell -ExecutionPolicy Bypass -File setup-whisper.ps1
+# ============================================================================
+
+asr:
+  # 是否启用 ASR 功能（false = 服务器不支持开转写，客户端按钮置灰）
+  enabled: false
+  # 转写引擎（由服务器统一决定，客户端不可选）：
+  #   local-vosk（本地 Vosk，免费离线，推荐）| local-whisper（本地 whisper.cpp，免费）| aliyun-bailian（阿里云百炼，计费）
+  mode: "local-vosk"
+  # 转写日志目录（相对 server/ 或绝对路径），文件名为 房间-开始-结束.txt
+  logDir: "logs"
+  # VAD 参数（一般不用改）
+  vadThreshold: 0.012
+  minSpeechMs: 600
+  silenceFlushMs: 900
+  maxUtteranceMs: 10000
+  # mock: true 时不调用真实引擎，返回模拟文本（仅测试用）
+  mock: false
+
+  # ---- 人声门控（可选，推荐）----
+  # 送 ASR 前先用本地 Silero VAD 判断有没有人声：鼓掌/环境音等无语音内容的音频直接丢弃，
+  # 省阿里云费用、也避免百炼返回"无内容 400 {}"。
+  # 安装（在 server 目录下）：
+  #   Debian/Ubuntu: bash setup-silero-vad.sh
+  #   Windows:       powershell -ExecutionPolicy Bypass -File setup-silero-vad.ps1
+  # 依赖（onnxruntime-node / silero_vad.onnx）缺失时自动放行全部音频，不影响转写。
+  speechGate:
+    enabled: true
+    mode: "silero"
+    model: "silero/silero_vad.onnx"
+    threshold: 0.5          # 单帧语音概率阈值
+    minSpeechMs: 300        # 一句话里最少"判定为语音"的毫秒数
+    minSpeechRatio: 0.15    # 语音时长占整句比例下限（防单个突发帧误判）
+
+  # ---- 本地 whisper.cpp（mode: "local-whisper" 时使用）----
+  whisper:
+    # CLI 路径（相对 server/ 或绝对路径；Linux 上若在 PATH 里填 whisper-cli 即可）
+    bin: "whisper/whisper-cli"
+    # base 模型（setup 脚本会下载到 whisper/ggml-base.bin）
+    model: "whisper/ggml-base.bin"
+    # 语言：留空自动检测；中文建议填 zh
+    language: "zh"
+    # 推理线程数
+    threads: 4
+
+  # ---- 本地 Vosk（离线识别，可选，免费）----
+  # 安装（服务器能访问 npm 时）：
+  #   cd server && npm install vosk --no-save
+  # 不能访问 npm 时：在有网的 Linux/WSL 里对 server 目录执行同样的命令，再把 node_modules/vosk 整个目录传到服务器
+  # 模型（解压到 server/ 下，目录名对应 modelDir）：
+  #   小模型 中文 ~42MB:  https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip
+  #   大模型 中文 ~1.4GB: https://alphacephei.com/vosk/models/vosk-model-cn-0.22.zip
+  vosk:
+    modelDir: "vosk/vosk-model-small-cn-0.22"   # 解压后的模型目录（相对 server/ 或绝对路径）
+    # 去掉中文分词空格："你 知道 我" -> "你知道我"（英文单词间的空格保留）；不需要可设 false
+    noSpaces: true
+
+  # ---- 阿里云百炼（qwen-audio-3.0-asr-flash 多模态语音识别，计费约 0.00022 元/秒）----
+  # 开通：阿里云百炼控制台 -> API-KEY 管理（https://bailian.console.aliyun.com）
+  # 接口：POST https://{workspaceId}.{region}.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
+  # 说明：音频 base64 内联（data:audio/wav;base64,...），不需要公网 URL；默认同步调用，短音频直接返回文本。
+  aliyun:
+    # 百炼 API Key（也可用环境变量 DASHSCOPE_API_KEY，二选一）
+    apiKey: ""
+    # 业务空间 ID = 创建 API Key 时页面显示的 API Host 第一段（如 llm-6aiq764znjvwz7zq）。
+    # 注意：业务空间按地域区分（各地域 workspace-id 不同），换 region 时需换成该地域的 workspace-id。
+    workspaceId: ""
+    # 模型：qwen-audio-3.0-asr-flash（多模态语音识别，需在百炼控制台开通）
+    model: "qwen-audio-3.0-asr-flash"
+    # 区域 = API Host 第二段。默认 cn-beijing；服务器在华南（广州）可选 cn-shenzhen（需开通并换该地域 workspace-id）
+    region: "cn-beijing"
+    # 失败音频保留目录（相对 server/ 或绝对路径）：转写失败时把这段 WAV 写到这里，便于下载试听/排查
+    audioDir: "asr-audio"
+    # 转写参数：默认 { language_hints: ["zh","en"] }，可整体覆盖/扩展
+    parameters: {}
+    # 自检：true 时启动后用官方示例音频跑一遍转写并打印结果（诊断用；示例音频地址可用 selfTestAudioUrl 覆盖）
+    selfTest: false
+    # 一般留空（自动拼接上面地址）；测试/代理时可整体覆盖 API 地址（http:// 或 https://）
+    baseUrl: ""
